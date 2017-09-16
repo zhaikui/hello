@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hello" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.7" value="${jdk.home.1.7}/bin"/>
+  <path id="jdk.classpath.1.7">
+    <fileset dir="${jdk.home.1.7}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxrt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.7}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.7}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.7"/>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module hello -->
+  
+  <dirname property="module.hello.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.hello" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.hello" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.hello" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.hello" value="-encoding UTF-8 -source 1.6 -target 1.6 ${compiler.args}"/>
+  
+  <property name="hello.output.dir" value="${module.hello.basedir}/out/production/hello"/>
+  <property name="hello.testoutput.dir" value="${module.hello.basedir}/out/test/hello"/>
+  
+  <path id="hello.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hello.module.production.classpath">
+    <path refid="${module.jdk.classpath.hello}"/>
+  </path>
+  
+  <path id="hello.runtime.production.module.classpath">
+    <pathelement location="${hello.output.dir}"/>
+  </path>
+  
+  <path id="hello.module.classpath">
+    <path refid="${module.jdk.classpath.hello}"/>
+    <pathelement location="${hello.output.dir}"/>
+  </path>
+  
+  <path id="hello.runtime.module.classpath">
+    <pathelement location="${hello.testoutput.dir}"/>
+    <pathelement location="${hello.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.hello">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hello">
+    <patternset refid="excluded.from.module.hello"/>
+  </patternset>
+  
+  <path id="hello.module.sourcepath">
+    <dirset dir="${module.hello.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.hello" depends="compile.module.hello.production,compile.module.hello.tests" description="Compile module hello"/>
+  
+  <target name="compile.module.hello.production" description="Compile module hello; production classes">
+    <mkdir dir="${hello.output.dir}"/>
+    <javac destdir="${hello.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.hello}/javac">
+      <compilerarg line="${compiler.args.hello}"/>
+      <bootclasspath refid="hello.module.bootclasspath"/>
+      <classpath refid="hello.module.production.classpath"/>
+      <src refid="hello.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.hello"/>
+    </javac>
+    
+    <copy todir="${hello.output.dir}">
+      <fileset dir="${module.hello.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.hello.tests" depends="compile.module.hello.production" description="compile module hello; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hello" description="cleanup module">
+    <delete dir="${hello.output.dir}"/>
+    <delete dir="${hello.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.hello" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.hello" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
