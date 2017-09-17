@@ -100,7 +100,6 @@ public class Main {
         new helloThread2().start();
 //		System.out.println("kill hello thread!");
 //		quitFlag = true;
-        System.out.println("test end--2!!");
-        for test 3
+        System.out.println("test end");
     }
 }
